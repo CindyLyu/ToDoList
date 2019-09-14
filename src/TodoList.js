@@ -1,86 +1,99 @@
-import React, { Component } from 'react'
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable react/jsx-filename-extension */
+/* eslint-disable react/prop-types */
+/* eslint-env jquery */
+
+import React, { Component } from 'react';
 
 
 class TodoList extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
-      todo: [],
       index: true,
       content: '',
-    }
-  }  
+    };
+  }
 
   _editTodo(e) {
     this.setState({
-      content: e.target.value
-    })
+      content: e.target.value,
+    });
   }
 
-  handleDeleteTodo (e) {
-    this.props.onDeleteTodo({
+  handleDeleteTodo(e) {
+    const { onDeleteTodo } = this.props;
+    onDeleteTodo({
       id: e.target.parentNode.id,
-    })
+    });
   }
 
   handleEdit(e) {
     this.setState({
       index: Number(e.target.parentNode.id),
-    })
+    });
   }
-  
+
   handleSubmitEdit(e) {
+    const { onUpdateTodo } = this.props;
+    const { content } = this.state;
     if (e.keyCode === 13) {
-      this.props.onUpdateTodo({
-        content: this.state.content,
+      onUpdateTodo({
+        content,
         id: Number(e.target.parentNode.id),
-        isComplete: $(e.target).parent('.list-group-item').find('.fa-square')[0] ? false : true
-      })
+        isComplete: !$(e.target).parent('.list-group-item').find('.fa-square')[0],
+      });
       this.setState({
         index: '',
-        content: ''
-      })
+        content: '',
+      });
     }
   }
 
   handleIsComplete(e) {
-    this.props.onChangeIsComplete({
+    const { onChangeIsComplete } = this.props;
+    onChangeIsComplete({
       isComplete: !$(e.target).hasClass('fa-square'),
-      id: Number(e.target.parentNode.id)
-    })
+      id: Number(e.target.parentNode.id),
+    });
   }
 
   render() {
-    const { data } = this.props
-    const { isEdit } = this.state
-    return(
-      <section className='todolist__content'>
+    const { data } = this.props;
+    const { index, content } = this.state;
+    return (
+      <section className="todolist__content">
         {
-          data.map((data, index) => 
-            <div className='list-group-item list-group-item-action' id={data.id} key={data.id}>
-            {
-              data.isComplete ?
-              <i className="far fa-check-square" onClick={this.handleIsComplete.bind(this)}></i> : 
-              <i className="far fa-square" onClick={this.handleIsComplete.bind(this)}></i>
+          data.map(item => (
+            <div className="list-group-item list-group-item-action" id={item.id} key={item.id}>
+              {
+              item.isComplete
+                ? <option className="far fa-check-square" onClick={this.handleIsComplete.bind(this)} />
+                : <option className="far fa-square" onClick={this.handleIsComplete.bind(this)} />
              }
               {
-                data.id ===  this.state.index ?
-                <input className='todolist__content-edit' value={this.state.content || data.content} onChange={this._editTodo.bind(this)} onKeyDown={this.handleSubmitEdit.bind(this)}></input> : 
-                <span className='todolist__content-item'>{data.content}</span>
+                item.id === index
+                  ? <input className="todolist__content-edit" value={content || item.content} onChange={this._editTodo.bind(this)} onKeyDown={this.handleSubmitEdit.bind(this)} />
+                  : <span className="todolist__content-item">{item.content}</span>
               }
               {
-                data.id ===  this.state.index ?
-                <span><span className='todolist__content-message'> （編輯後按 enter 送出）</span><button type='button' className='btn btn-link' onClick={this.handleEdit.bind(this)}>取消編輯</button></span> : 
-                <i className="fas fa-pen" onClick={this.handleEdit.bind(this)}></i>
+                item.id === index
+                  ? (
+                    <span>
+                      <span className="todolist__content-message"> （編輯後按 enter 送出）</span>
+                      <button type="button" className="btn btn-link" onClick={this.handleEdit.bind(this)}>取消編輯</button>
+                    </span>
+                  )
+                  : <option className="fas fa-pen" onClick={this.handleEdit.bind(this)} />
               }
-              <i className="fas fa-times" onClick={this.handleDeleteTodo.bind(this)}></i>
-           </div>
-          )
+              <option className="fas fa-times" onClick={this.handleDeleteTodo.bind(this)} />
+            </div>
+          ))
         }
       </section>
-    )
+    );
   }
 }
 
 
-export default TodoList
+export default TodoList;
