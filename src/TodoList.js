@@ -13,6 +13,11 @@ class TodoList extends Component {
       index: true,
       content: '',
     };
+    this.handleIsComplete = this.handleIsComplete.bind(this);
+    this._editTodo = this._editTodo.bind(this);
+    this.handleSubmitEdit = this.handleSubmitEdit.bind(this);
+    this.handleEdit = this.handleEdit.bind(this);
+    this.handleDeleteTodo = this.handleDeleteTodo.bind(this);
   }
 
   _editTodo(e) {
@@ -21,16 +26,16 @@ class TodoList extends Component {
     });
   }
 
-  handleDeleteTodo(e) {
+  handleDeleteTodo(id) {
     const { onDeleteTodo } = this.props;
     onDeleteTodo({
-      id: e.target.parentNode.id,
+      id,
     });
   }
 
-  handleEdit(e) {
+  handleEdit(id) {
     this.setState({
-      index: Number(e.target.parentNode.id),
+      index: Number(id),
     });
   }
 
@@ -50,11 +55,11 @@ class TodoList extends Component {
     }
   }
 
-  handleIsComplete(e) {
+  handleIsComplete(isComplete, id) {
     const { onChangeIsComplete } = this.props;
     onChangeIsComplete({
-      isComplete: !$(e.target).hasClass('fa-square'),
-      id: Number(e.target.parentNode.id),
+      isComplete,
+      id,
     });
   }
 
@@ -68,12 +73,12 @@ class TodoList extends Component {
             <div className="list-group-item list-group-item-action" id={item.id} key={item.id}>
               {
               item.isComplete
-                ? <option className="far fa-check-square" onClick={this.handleIsComplete.bind(this)} />
-                : <option className="far fa-square" onClick={this.handleIsComplete.bind(this)} />
+                ? <option className="far fa-check-square" onClick={() => this.handleIsComplete(false, item.id)} />
+                : <option className="far fa-square" onClick={() => this.handleIsComplete(true, item.id)} />
              }
               {
                 item.id === index
-                  ? <input className="todolist__content-edit" value={content || item.content} onChange={this._editTodo.bind(this)} onKeyDown={this.handleSubmitEdit.bind(this)} />
+                  ? <input className="todolist__content-edit" value={content || item.content} onChange={this._editTodo} onKeyDown={this.handleSubmitEdit} />
                   : <span className="todolist__content-item">{item.content}</span>
               }
               {
@@ -81,12 +86,12 @@ class TodoList extends Component {
                   ? (
                     <span>
                       <span className="todolist__content-message"> （編輯後按 enter 送出）</span>
-                      <button type="button" className="btn btn-link" onClick={this.handleEdit.bind(this)}>取消編輯</button>
+                      <button type="button" className="btn btn-link" onClick={this.handleEdit}>取消編輯</button>
                     </span>
                   )
-                  : <option className="fas fa-pen" onClick={this.handleEdit.bind(this)} />
+                  : <option className="fas fa-pen" onClick={() => this.handleEdit(item.id)} />
               }
-              <option className="fas fa-times" onClick={this.handleDeleteTodo.bind(this)} />
+              <option className="fas fa-times" onClick={() => this.handleDeleteTodo(item.id)} />
             </div>
           ))
         }

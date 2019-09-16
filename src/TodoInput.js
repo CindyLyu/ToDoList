@@ -10,7 +10,9 @@ class TodoInput extends Component {
       content: '',
       isComplete: 0,
     };
-    this.id = 2;
+    this.id = 3;
+    this.handleAddTodo = this.handleAddTodo.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   handleChange(e) {
@@ -25,7 +27,7 @@ class TodoInput extends Component {
     onSubmit({
       content,
       isComplete,
-      id: this.id += 1,
+      id: this.id++,
     });
     this.setState({
       content: '',
@@ -38,8 +40,8 @@ class TodoInput extends Component {
       <div>
         <header className="todolist__title">ToDoList</header>
         <div className="todolist__additem">
-          <input className="todolist__additem-input" placeholder="What needs to be done?" value={content} onChange={this.handleChange.bind(this)} />
-          <button className="todolist__additem-add" onClick={this.handleAddTodo.bind(this)} type="button">新增</button>
+          <input className="todolist__additem-input" placeholder="What needs to be done?" value={content} onChange={this.handleChange} />
+          <button className="todolist__additem-add" onClick={this.handleAddTodo} type="button">新增</button>
         </div>
       </div>
     );
